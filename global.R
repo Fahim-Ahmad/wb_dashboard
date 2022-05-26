@@ -13,6 +13,9 @@ path <- "input/data/"
 ind_vec <- c(
   "Please select the indicator" = "",
   "Adjusted net savings" = "adjusted_net_savings",
-  "GDP (current US$)" = "gdp_current_us"
+  "GDP (current US$)" = "gdp_current_us",
+  "GDP growth (annual %)" = "gdp_growth",
+  "Gross savings (% of GDP)" = "gross_savings",
+  "Central government debt, total (% of GDP)" = "central_government_debt"
 )
 
