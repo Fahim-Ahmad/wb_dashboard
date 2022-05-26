@@ -19,7 +19,10 @@ ui <- dashboardBody(
                                  box(style='width:400px;overflow-x: scroll; height:400px;overflow-y: scroll;',
                                      div(DT::dataTableOutput("table"))
                                      ),
-                                 hr()
+                                 hr(),
+                                 downloadLink("download_wide", label = "Get data in wide format"),
+                                 HTML("&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;"),
+                                 downloadLink("download_long", label = "Get data in long format")
                                  )
                                )
               ),
@@ -118,6 +121,24 @@ server <- function(input, output, session) {
       rownames= FALSE
 
     # }
+  )
+  
+  output$download_wide <- downloadHandler(
+    filename = function() {
+      paste(input$ind,"wide format", Sys.Date(), ".csv", sep = "_")
+    },
+    content = function(file) {
+      write.csv(data_wide(), file, row.names = F)
+    }
+  )
+  
+  output$download_long <- downloadHandler(
+    filename = function() {
+      paste(input$ind,"long format", Sys.Date(), ".csv", sep = "_")
+    },
+    content = function(file) {
+      write.csv(data_long(), file, row.names = F)
+    }
   )
 
 }
