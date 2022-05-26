@@ -1,3 +1,8 @@
+# ignore 'only_me.R' and 'DS_Store', and files that end with 'Rproj'
+only_me.R
+.DS_Store
+*.Rproj
+
 # History files
 .Rhistory
 .Rapp.history
