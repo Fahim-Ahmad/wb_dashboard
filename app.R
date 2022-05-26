@@ -11,7 +11,8 @@ ui <- dashboardBody(
               ),
   splitLayout(cellWidths = c("70%", "30%"),
               list(
-                conditionalPanel("input.ind != ''",sliderInput("year", label = "", min = 1960, max = 2022, value = 2020, step = 1)),
+                # conditionalPanel("input.ind != ''",sliderInput("year", label = "", min = 1960, max = 2022, value = 2020, step = 1)),
+                conditionalPanel("input.ind != ''", uiOutput("slider")),
                 conditionalPanel("input.ind != ''", highchartOutput("map", height = "400px"))
                 ),
               conditionalPanel("input.ind != ''",
@@ -47,6 +48,12 @@ server <- function(input, output, session) {
         pivot_longer(-c(`Country Name`, `Country Code`, `Indicator Name`, `Indicator Code`), names_to = "year") %>% 
         filter(!is.na(value)) %>% 
         mutate(year = as.numeric(year)) 
+    }
+  })
+  
+  output$slider <- renderUI({
+    if (input$ind != '') {
+      sliderInput("year", label = "", min = min(data_long()$year), max = max(data_long()$year), value = max(data_long()$year), step = 1, animate = TRUE, width = "40%") 
     }
   })
   
