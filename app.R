@@ -28,8 +28,11 @@ ui <- dashboardBody(
                                )
               ),
   hr(),
-  conditionalPanel("input.ind != ''", uiOutput("filter_by_country")),
-  conditionalPanel("input.ind != ''", highchartOutput("barchart", height = "250px")),
+  splitLayout(cellWidths = c("20%", "20%", "60%"),
+              conditionalPanel("input.ind != ''", uiOutput("filter_by_country")),
+              conditionalPanel("input.ind != ''", radioButtons("graph_type", label = HTML("&nbsp"), choices = c("Bar chart" = "bar", "Line chart" = "line"), selected = "bar", inline = T)),
+              ),
+  conditionalPanel("input.ind != ''", highchartOutput("bar_line", height = "250px")),
   br()
 )
 
@@ -121,12 +124,27 @@ server <- function(input, output, session) {
     }
   })
   
-  output$barchart <- renderHighchart({
+  output$bar_line <- renderHighchart({
     if (input$ind != '') {
-      data_long() %>% 
-        filter(`Country Name` == input$country) %>% 
-        filter(!is.na(value)) %>% 
-        hchart('column', hcaes(x = year, y = value)) 
+      if (input$graph_type == "line") {
+        highchart() %>% 
+          hc_add_series(data_long() %>% 
+                          filter(`Country Name` == input$country) %>% 
+                          filter(!is.na(value)) %>% 
+                          select(year, value) %>% 
+                          mutate(year = as.Date(ISOdate(year, 1, 1))) %>% 
+                          as.data.table() %>%
+                          as.xts.data.table(),
+                        id = "value",
+                        showInLegend = F
+                        ) %>% 
+          hc_xAxis(title = list(text = "<b>Date</b>"), type = "datetime")
+      } else if (input$graph_type == "bar") {
+        data_long() %>% 
+          filter(`Country Name` == input$country) %>% 
+          filter(!is.na(value)) %>% 
+          hchart('column', hcaes(x = year, y = value)) 
+      }
     }
   })
   
