@@ -50,6 +50,18 @@ server <- function(input, output, session) {
     }
   })
   
+  title <- reactive({
+    if (input$ind != '') {
+      readxl::read_excel(paste0(path, input$ind, ".xls"), sheet = "Metadata - Indicators") %>% pull(INDICATOR_NAME) 
+    }
+  })
+  
+  caption <- reactive({
+    if (input$ind != '') {
+      readxl::read_excel(paste0(path, input$ind, ".xls"), sheet = "Metadata - Indicators") %>% pull(SOURCE_NOTE) 
+    }
+  })
+  
   map_data <- reactive({
     if (input$ind != '') {
       left_join(
@@ -91,8 +103,8 @@ server <- function(input, output, session) {
           verticalAlign = "bottom",
           layout = "horizontal"
         ) %>%
-        hc_title(text = "This is title") %>% 
-        hc_subtitle(text = "This is subtitle")
+        hc_title(text = title()) %>% 
+        hc_caption(text = caption())
     }
   })
   
