@@ -28,7 +28,7 @@ ui <- shinyUI(
                         HTML(
                             "
                             <b>Developed by:</b><a href='https://fahimahmad.netlify.app'> Fahim Ahmad</a><br>
-                            <b>Souce code:</b><a href = 'https://github.com/Fahim-Ahmad/wb_dashboard'> GitHub</a><br>
+                            <b>Source code:</b><a href = 'https://github.com/Fahim-Ahmad/wb_dashboard'> GitHub</a><br>
                             <p>Please feel free to comment for improvement, report typos, or raise other concerns <a href = 'https://github.com/Fahim-Ahmad/wb_dashboard/issues'>here.</a></p>
                             "
                             ),
