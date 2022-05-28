@@ -8,7 +8,7 @@ ui <- shinyUI(
         navbarPage("WB Dashboard - A dashboard developed in R-shiny to visualize the World Bank data", header = tagList(use_theme(custom_theme))),
         fluidRow(style = "height:100%",
                  column(width = 8,
-                        selectInput("ind", label = "", choices = ind_vec, selected = ind_vec[1], width = "100%"),
+                        selectInput("ind", label = "", choices = indicators, selected = "Adjusted net savings, including particulate emission damage (% of GNI)", width = "100%"),
                         # conditionalPanel("input.ind != ''", uiOutput("slider")),
                         uiOutput("slider"),
                         tabsetPanel(
@@ -59,9 +59,15 @@ ui <- shinyUI(
 # server part of the dashboard ---------------------------------------
 server <- function(input, output, session) {
     
+    file_name <- reactive({
+        dt_info %>% 
+            filter(INDICATOR_NAME == input$ind) %>% 
+            pull(file_name)
+    })
+    
     data_wide <- reactive({
         # if (input$ind != '') {
-            dt <- readxl::read_excel(paste0(path, input$ind, ".xls"), skip = 3, sheet = "Data", guess_max = 1000)
+            dt <- readxl::read_excel(paste0(path, file_name(), ".xls"), skip = 3, sheet = "Data", guess_max = 1000)
         # }
     })
     
@@ -80,15 +86,11 @@ server <- function(input, output, session) {
         # }
     })
     
-    title <- reactive({
-        # if (input$ind != '') {
-            readxl::read_excel(paste0(path, input$ind, ".xls"), sheet = "Metadata - Indicators") %>% pull(INDICATOR_NAME) 
-        # }
-    })
-    
     caption <- reactive({
         # if (input$ind != '') {
-            readxl::read_excel(paste0(path, input$ind, ".xls"), sheet = "Metadata - Indicators") %>% pull(SOURCE_NOTE) 
+            dt_info %>% 
+                filter(INDICATOR_NAME == input$ind) %>% 
+                pull(SOURCE_NOTE)
         # }
     })
     
@@ -133,7 +135,7 @@ server <- function(input, output, session) {
                     verticalAlign = "bottom",
                     layout = "horizontal"
                 ) %>%
-                hc_title(text = title()) %>% 
+                hc_title(text = input$ind) %>%
                 hc_caption(text = caption())
         # }
     })
@@ -167,14 +169,18 @@ server <- function(input, output, session) {
         rownames= FALSE
     )
     
+    world_data <- reactive({
+        data_long() %>% 
+            filter(`Country Name` == "World") %>% 
+            filter(!is.na(value)) %>% 
+            select(year, value) %>% 
+            mutate(year = as.Date(ISOdate(year, 1, 1)))
+    })
+    
     output$world <- renderHighchart({
-        # if (input$ind != '') {
+        if (nrow(world_data())>0) {
             highchart(type = "chart") %>% 
-                hc_add_series(data_long() %>% 
-                                  filter(`Country Name` == "World") %>% 
-                                  filter(!is.na(value)) %>% 
-                                  select(year, value) %>% 
-                                  mutate(year = as.Date(ISOdate(year, 1, 1))) %>% 
+                hc_add_series(world_data() %>% 
                                   as.data.table() %>%
                                   as.xts.data.table(),
                               id = "value",
@@ -182,12 +188,12 @@ server <- function(input, output, session) {
                 ) %>% 
                 hc_xAxis(type = "datetime") %>% 
                 hc_subtitle(text = "World")
-        # }
+        }
     })
     
     output$download_wide <- downloadHandler(
         filename = function() {
-            paste(input$ind,"wide format", Sys.Date(), ".csv", sep = "_")
+            paste(input$ind,"_wide format_", Sys.Date(), ".csv", sep = "")
         },
         content = function(file) {
             write.csv(data_wide(), file, row.names = F)
@@ -196,7 +202,7 @@ server <- function(input, output, session) {
     
     output$download_long <- downloadHandler(
         filename = function() {
-            paste(input$ind,"long format", Sys.Date(), ".csv", sep = "_")
+            paste(input$ind,"_long format_", Sys.Date(), ".csv", sep = "")
         },
         content = function(file) {
             write.csv(data_long(), file, row.names = F)

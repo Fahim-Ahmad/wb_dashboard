@@ -1,4 +1,4 @@
-# Loading the required packages
+# Loading the required packages -----------------------------------------
 library(fresh)
 library(shiny)
 library(highcharter)
@@ -8,20 +8,18 @@ library(maps)
 library(tidyverse)
 library(data.table)
 
-# set the data path
+# store the information of each data file to use as vector of indicators, subtitle for the map, etc. -----------------------------------------
 path <- "input/data/"
+files <- list.files(path, pattern = ".xls")
+dt_info <- list()
 
-# vector to used as choices in the selectInput() in the UI part of the dashboard
-ind_vec <- c(
-  # "Please select the indicator" = "",
-  "Adjusted net savings" = "adjusted_net_savings",
-  "GDP (current US$)" = "gdp_current_us",
-  "GDP growth (annual %)" = "gdp_growth",
-  "Gross savings (% of GDP)" = "gross_savings",
-  "Central government debt, total (% of GDP)" = "central_government_debt"
-)
+for (file in files) {
+  dt_info[[str_remove(file, ".xls")]] <- readxl::read_excel(paste0(path, file), sheet = "Metadata - Indicators")
+}
+dt_info <- data.table::rbindlist(dt_info, idcol = "file_name")
+indicators <- unique(dt_info$INDICATOR_NAME)
 
-# custom theme
+# custom theme -----------------------------------------
 custom_theme <- fresh::create_theme(
   bs_vars_navbar(
     padding_horizontal = "15px",
