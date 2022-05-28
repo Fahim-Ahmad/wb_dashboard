@@ -25,14 +25,19 @@ ui <- shinyUI(
                         ),
                  column(width = 4,
                         br(),
-                        HTML(
-                            "
-                            <b>Developed by:</b><a href='https://fahimahmad.netlify.app'> Fahim Ahmad</a><br>
-                            <b>Source code:</b><a href = 'https://github.com/Fahim-Ahmad/wb_dashboard'> GitHub</a><br>
-                            <p>Please feel free to comment for improvement, report typos, or raise other concerns <a href = 'https://github.com/Fahim-Ahmad/wb_dashboard/issues'>here.</a></p>
-                            "
-                            ),
-                        br(),br(),br(),br(),br(),
+                        dropdownButton(
+                            HTML("<p><b>Developed by:</b> <a href='https://fahimahmad.netlify.app'> Fahim Ahmad</a></p>"),
+                            HTML("<p><b>Source code:</b> <a href = 'https://github.com/Fahim-Ahmad/wb_dashboard'> GitHub</a></p>"),
+                            HTML("<p>Please feel free to comment for improvement, report typos, or raise other concerns <a href = 'https://github.com/Fahim-Ahmad/wb_dashboard/issues'>here.</a></p>"),
+                            
+                            circle = TRUE,
+                            status = "danger",
+                            icon = icon("gear"),
+                            tooltip = tooltipOptions(title = "Click to see app info!"),
+                            width = "400px",
+                            inputId = "app_info"
+                        ),
+                        br(),br(),br(),br(),br(),br(),br(),
                         downloadLink("download_wide", label = "Download data in wide format"),
                         HTML("&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;"),
                         downloadLink("download_long", label = "Download data in long format"),
