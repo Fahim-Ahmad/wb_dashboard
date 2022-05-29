@@ -90,7 +90,15 @@ server <- function(input, output, session) {
         # if (input$ind != '') {
             dt_info %>% 
                 filter(INDICATOR_NAME == input$ind) %>% 
-                pull(SOURCE_NOTE)
+                pull(SOURCE_NOTE) %>% unique()
+        # }
+    })
+    
+    last_update <- reactive({
+        # if (input$ind != '') {
+        dt_info %>% 
+            filter(INDICATOR_NAME == input$ind) %>% 
+            pull(last_update) %>% unique()
         # }
     })
     
@@ -136,6 +144,7 @@ server <- function(input, output, session) {
                     layout = "horizontal"
                 ) %>%
                 hc_title(text = input$ind) %>%
+                hc_subtitle(text = paste0("Last Updated Date: ", last_update())) %>% 
                 hc_caption(text = caption())
         # }
     })
