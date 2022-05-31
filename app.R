@@ -16,6 +16,9 @@ ui <- shinyUI(
                                      # conditionalPanel("input.ind != ''", highchartOutput("map", height = "400px"))
                                      highchartOutput("map", height = "400px")
                                      ),
+                            tabPanel("Treemap",
+                                     highchartOutput("treemap", height = "400px")
+                            ),
                             tabPanel("Table",
                                      box(style='width:850px; overflow-x: scroll; height:400px;overflow-y: scroll;',
                                          DT::dataTableOutput("table")
@@ -149,6 +152,16 @@ server <- function(input, output, session) {
                 hc_caption(text = caption()) %>% 
                 hc_exporting(enabled = TRUE, filename = "map")
         # }
+    })
+    
+    output$treemap <- renderHighchart({
+        map_data() %>% 
+            hchart('treemap', hcaes(name = `iso-a3`, x = year, value = value, color = value)) %>% 
+            hc_colorAxis(stops = color_stops(colors = viridis::inferno(n = 10))) %>% 
+            hc_title(text = input$ind) %>%
+            hc_subtitle(text = paste0("Last Updated Date: ", last_update())) %>% 
+            hc_caption(text = caption()) %>% 
+            hc_exporting(enabled = TRUE, filename = "treemap")
     })
     
     output$filter_by_country <- renderUI({
