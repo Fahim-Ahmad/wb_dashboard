@@ -38,9 +38,9 @@ ui <- shinyUI(
                             inputId = "app_info"
                         ),
                         br(),br(),br(),br(),br(),br(),br(),
-                        downloadLink("download_wide", label = "Download data in wide format"),
+                        downloadLink("download_wide", label = HTML("<b>Download data in wide format</b>")),
                         HTML("&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;"),
-                        downloadLink("download_long", label = "Download data in long format"),
+                        downloadLink("download_long", label = HTML("<b>Download data in long format</b>")),
                         br(),
                         highchartOutput("world")
                         )
@@ -143,9 +143,11 @@ server <- function(input, output, session) {
                     verticalAlign = "bottom",
                     layout = "horizontal"
                 ) %>%
+                hc_colorAxis(stops = color_stops(n = 20, colors = c("#440154", "skyblue", "blue"))) %>% 
                 hc_title(text = input$ind) %>%
                 hc_subtitle(text = paste0("Last Updated Date: ", last_update())) %>% 
-                hc_caption(text = caption())
+                hc_caption(text = caption()) %>% 
+                hc_exporting(enabled = TRUE, filename = "map")
         # }
     })
     
@@ -166,7 +168,8 @@ server <- function(input, output, session) {
             data_long() %>% 
                 filter(`Country Name` == input$country) %>% 
                 filter(!is.na(value)) %>% 
-                hchart('column', hcaes(x = year, y = value))
+                hchart('column', hcaes(x = year, y = value)) %>% 
+                hc_exporting(enabled = TRUE, filename = "barchart")
         # }
     })
     
@@ -196,7 +199,8 @@ server <- function(input, output, session) {
                               showInLegend = F
                 ) %>% 
                 hc_xAxis(type = "datetime") %>% 
-                hc_subtitle(text = "World")
+                hc_subtitle(text = "World") %>% 
+                hc_exporting(enabled = TRUE, filename = "linechart")
         }
     })
     
