@@ -52,8 +52,9 @@ ui <- shinyUI(
             column(width = 12,
                    # conditionalPanel("input.ind != ''", uiOutput("filter_by_country")),
                    uiOutput("filter_by_country"),
+                   helpText("Select more than one country to compare between two or more than two countries."),
                    # conditionalPanel("input.ind != ''", highchartOutput("barchart", height = "250px"))
-                   highchartOutput("barchart", height = "250px")
+                   highchartOutput("bar_line_chart", height = "250px")
                    )
             )
         )
@@ -166,23 +167,48 @@ server <- function(input, output, session) {
     
     output$filter_by_country <- renderUI({
         # if (input$ind != '') {
-            pickerInput(
-                inputId = "country",
-                label = "", 
-                choices = unique(data_long()$`Country Name`)[unique(data_long()$`Country Name`) != "World"],
-                selected = "Germany",
-                options = list(style = "btn-primary", size = 5)
+        
+        dt_long <- left_join(data_long(), select(iso3166, a2, `Country Code` = a3), by = "Country Code") %>% mutate(a2 = tolower(a2))
+        countries <- dt_long %>% filter(!is.na(a2)) %>% pull(`Country Name`) %>% unique()
+        
+        flags <- paste0("https://cdn.rawgit.com/lipis/flag-icon-css/master/flags/4x3/",
+                        dt_long %>% 
+                            filter(!is.na(a2)) %>% 
+                            pull(a2) %>% unique(),
+                        ".svg"
+        )
+        
+        pickerInput(
+            inputId = "country",
+            label = NULL,
+            choices = countries,
+            multiple = T,
+            selected = "Germany",
+            choicesOpt = list(content =
+                                  mapply(countries, flags, FUN = function(country, flagUrl) {
+                                      HTML(paste(tags$img(src=flagUrl, width=20, height=15),country))
+                                      }, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+                              ),
+            options = list(style = "btn-primary", size = 5)
             )
         # }
     })
     
-    output$barchart <- renderHighchart({
+    output$bar_line_chart <- renderHighchart({
         # if (input$ind != '') {
-            data_long() %>% 
-                filter(`Country Name` == input$country) %>% 
-                filter(!is.na(value)) %>% 
-                hchart('column', hcaes(x = year, y = value)) %>% 
-                hc_exporting(enabled = TRUE, filename = "barchart")
+            if(length(input$country) == 1) {
+                data_long() %>% 
+                    filter(`Country Name` == input$country) %>% 
+                    filter(!is.na(value)) %>% 
+                    hchart('column', hcaes(x = year, y = value)) %>% 
+                    hc_exporting(enabled = TRUE, filename = "barchart")
+            } else {
+                data_long() %>% 
+                    filter(`Country Name` %in% input$country) %>% 
+                    filter(!is.na(value)) %>% 
+                    hchart('line', hcaes(x = year, y = value, group = `Country Name`)) %>% 
+                    hc_exporting(enabled = TRUE, filename = "country_comparison_linechar")
+            }
         # }
     })
     
