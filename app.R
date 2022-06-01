@@ -189,7 +189,9 @@ server <- function(input, output, session) {
                                       HTML(paste(tags$img(src=flagUrl, width=20, height=15),country))
                                       }, SIMPLIFY = FALSE, USE.NAMES = FALSE)
                               ),
-            options = list(style = "btn-primary", size = 5)
+            options = list(style = "btn-primary", size = 5,
+                           `live-search`=TRUE
+                           )
             )
         # }
     })
