@@ -52,7 +52,7 @@ ui <- shinyUI(
             column(width = 12,
                    # conditionalPanel("input.ind != ''", uiOutput("filter_by_country")),
                    uiOutput("filter_by_country"),
-                   helpText("Select more than one country to compare between two or more than two countries."),
+                   helpText("Select more than one country for comparison."),
                    # conditionalPanel("input.ind != ''", highchartOutput("barchart", height = "250px"))
                    highchartOutput("bar_line_chart", height = "250px")
                    )
