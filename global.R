@@ -1,12 +1,13 @@
 # Loading the required packages -----------------------------------------
-library(fresh)
-library(shiny)
-library(highcharter)
-library(shinydashboard)
-library(shinyWidgets)
-library(maps)
-library(tidyverse)
-library(data.table)
+if(!require(fresh)) install.packages("fresh")
+if(!require(shiny)) install.packages("shiny")
+if(!require(highcharter)) install.packages("highcharter")
+if(!require(shinydashboard)) install.packages("shinydashboard")
+if(!require(shinyWidgets)) install.packages("shinyWidgets")
+if(!require(maps)) install.packages("maps")
+if(!require(tidyverse)) install.packages("tidyverse")
+if(!require(data.table)) install.packages("data.table")
+if(!require(shiny.info)) install.packages("shiny.info")
 
 # store the information of each data file to use as vector of indicators, subtitle for the map, etc. -----------------------------------------
 path <- "input/data/"

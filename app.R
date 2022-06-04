@@ -7,6 +7,10 @@ ui <- shinyUI(
     bootstrapPage(
         navbarPage("WB Dashboard - A dashboard developed in R-shiny to visualize the World Bank data", header = tagList(use_theme(custom_theme))),
         fluidRow(style = "height:100%",
+                 shiny.info::busy(
+                     loader = "dots",
+                     position = "bottom right"
+                     ),
                  column(width = 8,
                         selectInput("ind", label = "", choices = indicators, selected = "Adjusted net savings, including particulate emission damage (% of GNI)", width = "100%"),
                         # conditionalPanel("input.ind != ''", uiOutput("slider")),
@@ -266,7 +270,7 @@ server <- function(input, output, session) {
     # observe({
     showModal(
         modalDialog(
-            HTML(paste0("Hello!<p> This dashboard aims to visualize the <a href = 'https://data.worldbank.org/indicator'> World Bank </a> (WB) data.<p>
+            HTML(paste0("Hello!<p> This dashboard aims to visualize the <u><a href = 'https://data.worldbank.org/indicator'> World Bank</a></u> (WB) data.<p>
                      Currently, it includes <b>", n_files, "</b> economy and growth related indicators and I plan to add more indicators in the future.")),
             footer = "",
             size = "m",
