@@ -22,6 +22,7 @@ date_info <- data.table::rbindlist(date_info, idcol = "file_name")
 dt_info <- cbind(dt_info, date_info[, 2]) %>% mutate(last_update = as.character(last_update))
 
 indicators <- unique(dt_info$INDICATOR_NAME)
+n_files <- length(files)
 
 # custom theme -----------------------------------------
 custom_theme <- fresh::create_theme(
