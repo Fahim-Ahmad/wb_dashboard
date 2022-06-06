@@ -270,8 +270,8 @@ server <- function(input, output, session) {
     # observe({
     showModal(
         modalDialog(
-            HTML(paste0("Hello!<p> This dashboard aims to visualize the <u><a href = 'https://data.worldbank.org/indicator'> World Bank</a></u> (WB) data.<p>
-                     Currently, it includes <b>", n_files, "</b> economy and growth related indicators and I plan to add more indicators in the future.")),
+            HTML(paste0("Hello!<p> I developed this dashboard to visualize the <u><a href = 'https://data.worldbank.org/indicator?tab=all'> World Bank</a></u> (WB) data.<p>
+                     Currently, it includes <b>", n_files, "</b> economy and growth related indicators and I plan to expand it in the future.")),
             footer = "",
             size = "m",
             easyClose = TRUE
